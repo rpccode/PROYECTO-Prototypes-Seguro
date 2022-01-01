@@ -47,8 +47,6 @@ Seguro.prototype.cotizarSeguro = function(){
             cantidad *= 1.50;
    }
 
-
-   console.log(cantidad);
     return cantidad;
 }
 
@@ -95,13 +93,57 @@ UI.prototype.mostrarMensaje = (mensaje, tipo)=>{
 
 }   
 
+UI.prototype.mostrarResultado = (seguro , total) => {
+
+        const {marca, year, tipo} = seguro;
+
+        let textMarca ;
+
+        switch (marca) {
+            case '1':
+                    textMarca = 'Americano';
+                    break;
+            case '2':
+                        textMarca = 'Japones';
+                        break;
+            case '3':
+                        textMarca = 'Europeo';
+                break;
+        
+            default:
+                break;
+        }
+
+        const div = document.createElement('div');
+        div.classList.add('mt-10')
+
+        div.innerHTML= `
+                <p class="header">Tu Resumen</p>
+                  <p class="font-bold">Marca: <span class="font-normal">${textMarca}</span></p>
+                  <p class="font-bold">Year: <span class="font-normal">${year}</span></p>
+                  <p class="font-bold">Tipo: <span class="font-normal capitalize">${tipo}</span></p>
+                <p class="font-bold">Total: <span class="font-normal">${total}</span></p>
+        
+        
+        `;
+
+        const resultadoDiv =document.querySelector('#resultado');
+
+       
+
+        //mostrando spinner
+        const spinner = document.querySelector('#cargando');
+        spinner.style.display = 'block';
+
+        setTimeout(() => {
+                spinner.style.display = 'none';//se eilimina el spinner
+                 resultadoDiv.appendChild(div);//se muestra el resultado
+        }, 2000);
+}
+
 //intanciar UI
 
 const ui = new UI();
-
-
-
-
 
 
 //event
@@ -124,30 +166,34 @@ function cotizarSeguro(e){
 
             //leer la marca seleccionada
             const marca = document.querySelector('#marca').value;
-           
-
 
             //leer el year seleccionado
             const year = document.querySelector('#year').value;
             
-
             //leer el tipo seleccionado
             const tipo = document.querySelector('input[name="tipo"]:checked').value;
-         
-
+        
 
             if (marca === '' ||  year === '' || tipo === '' ) {
                ui.mostrarMensaje('Todos los campos son obligatorios', 'error');
                return;
             }
                     ui.mostrarMensaje('pasaste la validación', 'correcto');
+            //ocultar cotizaciones previas 
+            const resultados = document.querySelector('#resultado div')
+
+            if (resultados != null) {
+
+                resultados.remove();
+                
+            }
 
             //instaciando Seguro
                 const seguro = new Seguro(marca, year, tipo);
-                seguro.cotizarSeguro(); 
+                const cotizar= seguro.cotizarSeguro(); 
 
             //utilizar el prototype que va a seleccionadar
-            
+            ui.mostrarResultado(seguro, cotizar);
 }
 
 //
